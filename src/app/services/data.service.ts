@@ -20,7 +20,7 @@ export class DataService {
     }
 
     getProjectsByOwnership(): Observable<IProjectGroup> {
-        let urlByOwner: string = this.url + "/by_ownership";
+        let urlByOwner: string = this.url + "/all/by_ownership";
 
         let jwt: string = localStorage.getItem("auth_token");
         let headers = this.authHeader(jwt);
@@ -29,6 +29,20 @@ export class DataService {
             .map((projectGroup: Response) => {
                 console.log("projectGroupResponse: ", projectGroup);
                 return projectGroup.json()
+            })
+            .catch((err: any) => Observable.throw(err.json().error || 'Server error'));
+    }
+
+    getProjectById(id: string) : Observable<IProject> {
+        let urlById: string = this.url + "/" + id;
+
+        let jwt: string = localStorage.getItem("auth_token");
+        let headers = this.authHeader(jwt);
+
+        return this.http.get(urlById, { headers: headers })
+            .map((project: Response) => {
+                console.log("project: ", project);
+                return project.json()
             })
             .catch((err: any) => Observable.throw(err.json().error || 'Server error'));
     }
@@ -53,7 +67,7 @@ export class DataService {
             .catch((err: any) => Observable.throw(err.json().error || 'Server error'));
     }
 
-    addMeetingMinutes(id: string, meetingMinutes: IMeetingMinutes): Observable<IGeneralResp> {
+    addMeetingMinutes(id: string, meetingMinutes: IMeetingMinutes): Observable<IProject> {
         let addMMUrl = this.url + "/" + id + "/meeting_minutes";
 
         let jwt: string = localStorage.getItem("auth_token");

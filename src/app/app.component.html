@@ -1,5 +1,8 @@
 <div class="main">
-  <div class="err-msg"><span *ngIf="errorMessage" class="animated bounceInDown">{{errorMessage}}</span></div>
+  <div class="msg">
+    <span *ngIf="errorMessage" class="err-msg animated bounceInDown">{{errorMessage}}</span>
+    <span *ngIf="successMessage" class="success-msg animated bounceInDown">{{successMessage}}</span>
+  </div>
   <div id="header">
     <nav class="navbar navbar-fixed-top navbar-inverse">
       <div class="container-fluid">
@@ -13,7 +16,7 @@
     </nav>
   </div>
 
-  <div *ngIf="isLoginActive()" id="login" class="container margin-20-t">
+  <div *ngIf="isLoginActive()" id="login" class="container margin-40-t">
     <div class="row">
       <div class="col-md-6 col-md-offset-3">
         <div class="panel panel-login">

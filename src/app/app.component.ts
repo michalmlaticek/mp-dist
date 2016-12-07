@@ -149,7 +149,6 @@ export class AppComponent {
   }
 
   onLoginSubmit({value, valid}: { value: ICredentials, valid: boolean }) {
-
     this.loginService.login(value)
       .subscribe(
       loginResp => {
@@ -171,7 +170,7 @@ export class AppComponent {
       .subscribe(
       signupResp => {
         console.log("Signup successfull");
-        this.successMessage = this.respMsgService.signupSuccess();
+        this.showSuccess(this.respMsgService.signupSuccess());
         this.changeLoginTab();
       },
       err => {
@@ -277,8 +276,15 @@ export class AppComponent {
       this.dataService.updateProject(this.activeProject._id, project)
         .subscribe(
         updatedProject => {
-          this.successMessage = "Success";
-          this.showProjectList();
+          this.showSuccess("successfully updated");
+          this.dataService.getProjectById(this.activeProject._id)
+            .subscribe(
+            project => {
+              this.activeProject = project;
+            },
+            err => this.showError("Failed to retrieve the updated project")
+            )
+          this.showProjectDetails(this.activeProject);
         },
         err => {
           this.showError(this.respMsgService.getUpdateFailed());
@@ -289,7 +295,7 @@ export class AppComponent {
         .subscribe(
         newProject => {
           console.log("New project: ", newProject);
-          this.successMessage = "Success";
+          this.showSuccess("successfully created");
           this.showProjectList();
         },
         err => {
@@ -320,17 +326,14 @@ export class AppComponent {
   }
 
   isMMList() {
-    // console.log("mmSubView===EMMSubView.list: ", this.mmSubView === EMMSubView.list);
     return this.mmSubView === EMMSubView.list;
   }
 
   isMMRead() {
-    // console.log("mmSubView===EMMSubView.read: ", this.mmSubView === EMMSubView.read);
     return this.mmSubView === EMMSubView.read;
   }
 
   isMMAdd() {
-    // console.log("mmSubView===EMMSubView.add: ", this.mmSubView === EMMSubView.add);
     return this.mmSubView === EMMSubView.add;
   }
 
@@ -375,8 +378,8 @@ export class AppComponent {
       .subscribe(
       resp => {
         console.log("adding mm response: ", resp);
-        this.successMessage = "Added succefully";
-        this.activeProject.meetingMinutes.push(value);
+        this.showSuccess("Added succefully");
+        this.activeProject = resp;
         this.closeAddMeetingMinutes();
       },
       err => this.showError("Adding failed")
@@ -417,6 +420,13 @@ export class AppComponent {
     this.errorMessage = errMsg;
     setTimeout(() => {
       this.errorMessage = null;
+    }, 5000);
+  }
+
+  showSuccess(successMsg: string) {
+    this.successMessage = successMsg;
+    setTimeout(() => {
+      this.successMessage = null;
     }, 5000);
   }
 }

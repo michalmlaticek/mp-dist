@@ -96,7 +96,19 @@ projectRouter.get('/', (request: Request, response: Response) => {
     });
 });
 
-projectRouter.get('/by_ownership', (request: Request & { email: string }, response: Response) => {
+projectRouter.get('/:id', (request: Request, response: Response) => {
+    let projectId = request.params['id'];
+    projectRepo.findById(projectId, (err, result) => {
+        if(err) {
+            response.status(500);
+            response.send({ "message": "Internal server errror" });
+        } else {
+            response.json(result);
+        }
+    });
+});
+
+projectRouter.get('/all/by_ownership', (request: Request & { email: string }, response: Response) => {
     let userEmail = request.email;
     console.log("userEmail", userEmail);
     projectRepo.retrieve((err, result) => {
@@ -142,7 +154,7 @@ projectRouter.put('/:id/meeting_minutes', (request: Request & { email: string },
             response.send({ "message": "Internal server errror" });
         } else {
             console.log("Adding meeting_minutes successfull: ", result);
-            response.json({ "message": "successfull" });
+            response.json(result);
         }
     });
 });
