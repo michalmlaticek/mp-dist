@@ -10,7 +10,7 @@ import {
 export class DataService {
     url: string;
     constructor(private http: Http) {
-        this.url = "http://localhost:4300/api/project"
+        this.url = "/api/project"
     }
 
     private authHeader(jwt: string): Headers {

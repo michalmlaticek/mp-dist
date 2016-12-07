@@ -7,7 +7,7 @@ import { IAuthResp, ICredentials, IUser, IGeneralResp, ArrayResponse } from '../
 export class LoginService {
   private url: string;
   constructor(private http: Http) {
-    this.url = "http://localhost:4300/api/login"
+    this.url = "/api/login"
   }
 
   login(credentials: ICredentials): Observable<IAuthResp> {
