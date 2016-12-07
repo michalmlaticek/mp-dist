@@ -29,7 +29,7 @@ loginRouter.post('/signup', function (request: Request, response: Response, next
         let user: IUser = <IUser>request.body;
         user.salt = randomBytes(128).toString('base64');
         console.log("user: ", user); // this should not normaly be logged
-        pbkdf2(request.body.password, user.salt, 10000, length, digest, (err: Error, hash: Buffer) => {
+        pbkdf2(request.body.password, user.salt, 10000, 128, digest, (err: Error, hash: Buffer) => {
             user.password = hash.toString('hex');
             userRepo.create(user, (error, result) => {
                 if (error) {
@@ -82,7 +82,7 @@ loginRouter.post('/', function (request: Request, response: Response, next: Next
                 return next(error);
             }
             let user = result[0];
-            pbkdf2(request.body.password, user.salt, 10000, length, digest, (err: Error, hash: Buffer) => {
+            pbkdf2(request.body.password, user.salt, 10000, 128, digest, (err: Error, hash: Buffer) => {
                 if (err) {
                     console.log(err);
                 }

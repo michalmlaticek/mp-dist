@@ -11,7 +11,7 @@ import * as http from 'http';
 /**
  * Get port from environment and store in Express.
  */
-const port = normalizePort(process.env.PORT || serverPort);
+const port = normalizePort(process.env.MP_DIST_PORT || serverPort);
 app.set('port', port);
 
 /**

@@ -1,3 +1,5 @@
+require('dotenv').config();
+// import { config } from 'dotenv';
 import * as express from 'express';
 import { json, urlencoded } from 'body-parser';
 import * as path from 'path';
@@ -20,7 +22,7 @@ app.use(cors({
   origin: 'http://localhost:4200'
 }));
 
-// app.set('env', 'production');
+app.set('env', 'production');
 
 // api routes
 app.use('/api/login', loginRouter);
