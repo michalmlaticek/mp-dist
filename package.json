@@ -49,6 +49,7 @@
     "@types/jsonwebtoken": "^7.1.31",
     "@types/node": "^6.0.48",
     "@types/node-uuid": "0.0.28",
+    "@types/mongoose": "^4.6.1",
     "angular-cli": "1.0.0-beta.20-4",
     "body-parser": "~1.13.2",
     "bootstrap": "^3.3.7",
@@ -74,7 +75,6 @@
     "zone.js": "^0.6.23"
   },
   "devDependencies": {
-    "@types/mongoose": "^4.6.1",
     "codelyzer": "1.0.0-beta.3",
     "concurrently": "^3.1.0",
     "jasmine-core": "2.4.1",
