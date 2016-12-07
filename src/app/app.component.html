@@ -1,0 +1,386 @@
+<div class="main">
+  <div class="err-msg"><span *ngIf="errorMessage" class="animated bounceInDown">{{errorMessage}}</span></div>
+  <div id="header">
+    <nav class="navbar navbar-fixed-top navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#" (click)="initView()">mp dist</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#" (click)="logOut()"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+
+  <div *ngIf="isLoginActive()" id="login" class="container margin-20-t">
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="panel panel-login">
+          <div class="panel-heading">
+            <div class="row">
+              <div [ngClass]="['col-xs-6', cssLoginTab]">
+                <a href="#" id="login-form-link" (click)="changeLoginTab()">Login</a>
+              </div>
+              <div [ngClass]="['col-xs-6', cssSignupTab]">
+                <a href="#" id="register-form-link" (click)="changeLoginTab()">Register</a>
+              </div>
+            </div>
+            <hr>
+          </div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-lg-12">
+                <form *ngIf="activeLoginTab == 0" id="login-form" [formGroup]="loginForm" (ngSubmit)="onLoginSubmit(loginForm)" role="form"
+                  style="display: block;">
+                  <div class="form-group">
+                    <input type="text" formControlName="email" tabindex="1" class="form-control" placeholder="Email">
+                  </div>
+                  <div class="form-group">
+                    <input type="password" formControlName="password" tabindex="2" class="form-control" placeholder="Password">
+                  </div>
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-sm-6 col-sm-offset-3">
+                        <input type="submit" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-primary" value="Log In">
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <form *ngIf="activeLoginTab == 1" id="register-form" [formGroup]="signUpForm" (ngSubmit)="onSignupSubmit(signUpForm)" role="form">
+                  <div class="form-group">
+                    <input type="text" formControlName="firstName" tabindex="1" class="form-control" placeholder="Username" value="">
+                  </div>
+                  <div class="form-group">
+                    <input type="text" formControlName="lastName" tabindex="1" class="form-control" placeholder="Username" value="">
+                  </div>
+                  <div class="form-group">
+                    <input type="email" formControlName="email" tabindex="1" class="form-control" placeholder="Email Address" value="">
+                  </div>
+                  <div class="form-group">
+                    <input type="password" formControlName="password" tabindex="2" class="form-control" placeholder="Password">
+                  </div>
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-sm-6 col-sm-offset-3">
+                        <input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-primary" value="Register Now">
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isProjectListActive()" id="project-list" class="container margin-20-t">
+    <div id="owned-projects" class="row margin-20-b">
+      <div class="col-xs-12">
+        <h3>List of your projects</h3>
+      </div>
+      <div class="col-xs-12">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="col-md-1">#</th>
+              <th class="col-md-2">Project Name</th>
+              <th class="col-md-8">Description</th>
+              <th class="col-md-1">Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let project of projectGroup?.owner; let i = index">
+              <th scope="row">{{i}}</th>
+              <td>{{project.name | truncate : 15 }}</td>
+              <td>{{project.description | truncate : 60 }}</td>
+              <td><span class="glyphicon glyphicon-edit" (click)="showProjectDetails(project)"></span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-xs-12">
+        <a href="#" (click)="showAddProject()">+ Add new project</a>
+      </div>
+    </div>
+    <div id="member-projects" class="row margin-20-b">
+      <div class="col-xs-12">
+        <h3>List of projects you are a member of</h3>
+      </div>
+      <div class="col-xs-12">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="col-md-1">#</th>
+              <th class="col-md-2">Project Name</th>
+              <th class="col-md-6">Description</th>
+              <th class="col-md-2">Owner</th>
+              <th class="col-md-1">Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let project of projectGroup?.member; let i = index">
+              <th scope="row">{{i}}</th>
+              <td>{{project.name | truncate : 15 }}</td>
+              <td>{{project.description | truncate : 45 }}</td>
+              <td>{{project.owner}}</td>
+              <td><span class="glyphicon glyphicon-edit" (click)="showProjectDetails(project)"></span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div id="other-projects" class="row margin-20-b">
+      <div class="col-xs-12">
+        <h3>Other projects</h3>
+      </div>
+      <div class="col-xs-12">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="col-md-1">#</th>
+              <th class="col-md-2">Project Name</th>
+              <th class="col-md-6">Description</th>
+              <th class="col-md-2">Owner</th>
+              <th class="col-md-1">Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let project of projectGroup?.other; let i = index">
+              <th scope="row">{{i}}</th>
+              <td>{{project.name | truncate : 15 }}</td>
+              <td>{{project.description | truncate : 45 }}</td>
+              <td>{{project.owner}}</td>
+              <td><span class="glyphicon glyphicon-edit" (click)="showProjectDetails(project)"></span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isProjectDetailActive()" id="project-details" class="container margin-20-t">
+    <div class="row margin-20-b">
+      <div class="col-xs-12">
+        <span class="glyphicon glyphicon-remove pull-right" (click)="closeProjectDetails()"></span>
+      </div>
+    </div>
+    <div class="row margin-20-b">
+      <div class="col-xs-12">
+        <h3>Project view</h3>
+      </div>
+    </div>
+    <div class="row margin-20-b">
+      <div class="col-md-2 col-xs-12"><label>Project Name:</label></div>
+      <div class="col-md-10 col-xs-12">{{activeProject.name}}</div>
+    </div>
+    <div class="row margin-20-b">
+      <div class="col-md-2 col-xs-12"><label>Project Description:</label></div>
+      <div class="col-md-10 col-xs-12">{{activeProject.description}}</div>
+    </div>
+    <div class="row margin-20-b">
+      <div class="col-md-2 col-xs-12"><label>Members:</label></div>
+      <div class="col-md-10 col-xs-12">
+        <div class="row">
+          <div *ngFor="let member of activeProject.members;let i = index" class="col-xs-6 col-md-3">
+            <span class="form-control">{{member | truncate : 13}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="activeProject.owner==activeUser.email" class="row margin-20-b">
+      <div class="col-md-offset-11 col-md-1 col-xs-12">
+        <button class="form-control btn btn-primary" (click)="showEditProject()">Edit</button>
+      </div>
+    </div>
+
+    <div *ngIf="isMMList()" id="mm-list" class="row">
+      <div class="col-xs-12">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Date</th>
+              <th>Author</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let meetingMinutes of activeProject?.meetingMinutes; let i=i ndex">
+              <th scope="row">{{i}}</th>
+              <td>{{meetingMinutes.meetingDate}}</td>
+              <td>{{meetingMinutes.author}}</td>
+              <td><span class="glyphicon glyphicon-edit" (click)="showReadMeetingMinutes(meetingMinutes)"></span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="canAddMM()" class="col-xs-12">
+        <a (click)="showAddMeetingMinutes()">+ Add meeting minutes</a>
+      </div>
+    </div>
+
+    <div *ngIf="isMMRead()" id="mm-read" class="row">
+      <div class="col-xs-12">
+        <span class="glyphicon glyphicon-remove pull-right" (click)="closeReadMeetingMinutes()"></span>
+      </div>
+      <div class="col-xs-12">
+        <div class="row">
+          <h4>Meeting notes</h4>
+          <div class="col-xs-12 margin-20-b">
+            {{activeMM.notes}}
+          </div>
+        </div>
+        <div *ngFor="let task of activeMM.tasks; let i=i ndex" class="row">
+          <div class="col-xs-12">Task {{i + 1}}</div>
+          <div class="col-xs-12 col-md-4">{{task.taskName}}</div>
+          <div class="col-xs-12 col-md-4">{{task.taskOwner}}</div>
+          <div class="col-xs-12 col-md-4">{{task.dueDate}}</div>
+          <div class="col-xs-12 margin-20-t">
+            {{task.taskDescription}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="isMMAdd()" id="mm-add" class="row">
+      <div class="col-xs-12 margin-20-b">
+        <span class="glyphicon glyphicon-remove pull-right" (click)="closeAddMeetingMinutes()"></span>
+      </div>
+      <div class="col-xs-12 margin-20-b">
+        <h3>New Meeting Minutes</h3>
+      </div>
+      <div class="col-xs-12 margin-20-t">
+        <form [formGroup]="mmForm" novalidate (ngSubmit)="onSaveMeetingMinutes(mmForm)">
+          <div class="row margin-20-b">
+            <div class="col-xs-12">
+              <textarea type="text" formControlName="notes" class="form-control" placeholder="Meeting notes ..."></textarea>
+            </div>
+          </div>
+          <div formArrayName="tasks" class="row">
+            <div class="col-xs-12">
+              <div *ngFor="let task of mmForm.controls.tasks.controls; let i=index" class="margin-20-b">
+                <div [formGroupName]="i" class="row">
+                  <div class="col-xs-12 task-form">
+                    <div class="col-xs-12 margin-20-b task-header">
+                      <div class="col-xs-11">
+                        <span>Task {{i + 1}}</span>
+                      </div>
+                      <div class="col-xs-1 margin-20-b">
+                        <span class="glyphicon glyphicon-remove-sign pull-right" (click)="onRemoveTask(i)"></span>
+                      </div>
+                    </div>
+                    <div class="col-xs-12 col-md-4 margin-20-b">
+                      <label>Task name</label>
+                      <input type="text" formControlName="taskName" class="form-control" placeholder="Task name">
+                    </div>
+                    <div class="col-xs-12 col-md-4 margin-20-b">
+                      <label>Task owner</label>
+                      <select formControlName="taskOwner" class="form-control" placeholder="Task Owner">
+                        <option *ngFor="let taskOwner of getProjectUsers()" [value]="taskOwner">{{taskOwner}}</option>
+                      </select>
+                    </div>
+                    <div class="col-xs-12 col-md-4 margin-20-b">
+                      <label style="display:block;">Due date</label>
+                      <!--<input type="text" formControlName="dueDate" class="form-control" placeholder="Due date">-->
+                      <datepicker-ionic formControlName="dueDate" [expanded]="true" singleSelect></datepicker-ionic>
+                    </div>
+                    <div class="col-xs-12 margin-20-t">
+                      <textarea type="text" formControlName="taskDescription" class="form-control" placeholder="Task descritpion"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 margin-20-b">
+              <a href="#" (click)="onAddTask()">+ Add another task</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-md-offset-10 col-xs-1">
+              <button type="submit" class="form-control btn btn-success">Save</button>
+            </div>
+            <div class="col-xs-12 col-md-1">
+              <button class="form-control btn btn-danger">Cancel</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isEditProjectActive()" id="project-edit" class="container margin-20-t">
+    <div class="row">
+      <div class="col-xs-12 margin-20-b">
+        <span class="glyphicon glyphicon-remove pull-right" (click)="closeAddProject()"></span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 margin-20-b">
+        <h3>Edit Project</h3>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <form [formGroup]="projectEditForm" (ngSubmit)="onSaveProject(projectEditForm)">
+          <div class="row">
+            <div class="col-md-2 col-xs-12"><label>Project Name:</label></div>
+            <div class="col-md-10 col-xs-12 margin-20-b">
+              <input type="text" formControlName="name" tabindex="1" class="form-control" placeholder="Your new project name">
+            </div>
+            <div class="col-md-2 col-xs-12"><label>Project Description:</label></div>
+            <div class="col-md-10 col-xs-12 margin-20-b">
+              <textarea type="text" formControlName="description" tabindex="1" class="form-control" placeholder="Your project description"></textarea>
+            </div>
+            <div class="col-md-2 col-xs-12"><label>Members:</label></div>
+            <div class="col-md-10 col-xs-12 margin-20-b">
+              <div class="row">
+                <div *ngFor="let member of activeMembers;let i = index" class="col-xs-6 col-md-3">
+                  <span class="form-control">{{member | truncate : 13}}<i class="glyphicon glyphicon-remove-sign pull-right" (click)="onRemoveMember(i)"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-xs-12 margin-20-b">
+              <a *ngIf="!showingAddMember" (click)="showAddMember()" href="#">+ Add Member</a>
+              <div *ngIf="showingAddMember" class="row">
+                <div class="col-xs-12">
+                  <span class="glyphicon glyphicon-remove pull-right" (click)="closeAddMember()"></span>
+                </div>
+                <div class="col-xs-12">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th class="col-md-1">#</th>
+                        <th class="col-md-5">User Name</th>
+                        <th class="col-md-5">Email</th>
+                        <th class="col-md-1">Add</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let user of allUsers; let i = index">
+                        <th scope="row">{{i}}</th>
+                        <td>{{user.firstName}} {{user.lastName}}</td>
+                        <td>{{user.email}}</td>
+                        <td><span class="glyphicon glyphicon-plus" (click)="onAddMember(user.email)"></span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-offset-10 col-md-1 margin-20-b">
+            <button type="submit" class="form-control btn btn-success">Save</button>
+          </div>
+          <div class="col-xs-12 col-md-1">
+            <button class="form-control btn btn-danger" (click)="closeAddProject()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
