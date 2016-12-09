@@ -15,7 +15,7 @@ export class ProjectRepository extends BaseRepository<IProject> {
             id,
             { $push: { "meetingMinutes": meetingMinutes } },
             callback
-        )
+        );
     }
 
 }

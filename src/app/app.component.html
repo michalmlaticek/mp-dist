@@ -213,7 +213,7 @@
           <tbody>
             <tr *ngFor="let meetingMinutes of activeProject?.meetingMinutes; let i=i ndex">
               <th scope="row">{{i}}</th>
-              <td>{{meetingMinutes.meetingDate}}</td>
+              <td>{{meetingMinutes.meetingDate | date:'dd-MM-yyyy'}}</td>
               <td>{{meetingMinutes.author}}</td>
               <td><span class="glyphicon glyphicon-edit" (click)="showReadMeetingMinutes(meetingMinutes)"></span></td>
             </tr>

@@ -99,7 +99,7 @@ projectRouter.get('/', (request: Request, response: Response) => {
 projectRouter.get('/:id', (request: Request, response: Response) => {
     let projectId = request.params['id'];
     projectRepo.findById(projectId, (err, result) => {
-        if(err) {
+        if (err) {
             response.status(500);
             response.send({ "message": "Internal server errror" });
         } else {
@@ -153,8 +153,17 @@ projectRouter.put('/:id/meeting_minutes', (request: Request & { email: string },
             response.status(500);
             response.send({ "message": "Internal server errror" });
         } else {
-            console.log("Adding meeting_minutes successfull: ", result);
-            response.json(result);
+            console.log("updated project id: ", result['_id']);
+            projectRepo.findById(result['_id'], (err, updatedProj) => {
+                if (err) {
+                    console.log("update succesfull, but retrieving of updated failed.", err);
+                    response.status(500);
+                    response.send({ "message": "Internal server errror" });
+                } else {
+                    console.log("Adding meeting_minutes successfull: ", updatedProj);
+                    response.json(updatedProj);
+                }
+            });
         }
     });
 });

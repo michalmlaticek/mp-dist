@@ -39,8 +39,8 @@ loginRouter.post('/signup', function (request: Request, response: Response, next
                         response.send({ "message": "user already exists" });
                     }
                     console.log(error);
-                    let err = new Error(error);
-                    return next(err);
+                    response.status(500);
+                    response.send({ "message": "Error on signup" });
                 } else {
                     console.log("saved user: ", result);
                     response.send({ "success": "registration successfull" });
@@ -59,12 +59,12 @@ loginRouter.post('/', function (request: Request, response: Response, next: Next
         if (!request.body.hasOwnProperty('email')) {
             let err = new Error('No email');
             response.status(400);
-            return next(err);
+            response.send({ "message": "No email" });
         }
         if (!request.body.hasOwnProperty('password')) {
             let err = new Error('No password');
             response.status(400);
-            return next(err);
+            response.send({ "message": "No password" })
         }
         console.log("logging in user: ", request.body.email);
         userRepo.findBy({ "email": request.body.email }, (err, result: Array<IUser>) => {
@@ -72,31 +72,31 @@ loginRouter.post('/', function (request: Request, response: Response, next: Next
             console.log("result", result);
             if (err) {
                 console.log(err);
-                let error = new Error("Some error during login");
-                return next(err);
+                response.status(500);
+                response.send({ "message": "Some error during login" });
             }
             if (result.length == 0) {
                 console.log("User not found");
                 response.status(404);
-                let error = new Error("User not found");
-                return next(error);
-            }
-            let user = result[0];
-            pbkdf2(request.body.password, user.salt, 10000, 128, digest, (err: Error, hash: Buffer) => {
-                if (err) {
-                    console.log(err);
-                }
+                response.send("User not found");
+            } else {
+                let user = result[0];
+                pbkdf2(request.body.password, user.salt, 10000, 128, digest, (err: Error, hash: Buffer) => {
+                    if (err) {
+                        console.log(err);
+                    }
 
-                // check if password is active
-                if (hash.toString('hex') === user.password) {
-                    const token = sign({ 'user': user.email, permissions: [] }, secret, { expiresIn: '7d' });
-                    let shareableUser = <IShareableUser>user;
-                    console.log("shareable user: ", shareableUser);
-                    response.json({ 'jwt': token, 'user': shareableUser });
-                } else {
-                    response.json({ message: 'Login failed!' });
-                }
-            });
+                    // check if password is active
+                    if (hash.toString('hex') === user.password) {
+                        const token = sign({ 'user': user.email, permissions: [] }, secret, { expiresIn: '7d' });
+                        let shareableUser = <IShareableUser>user;
+                        console.log("shareable user: ", shareableUser);
+                        response.json({ 'jwt': token, 'user': shareableUser });
+                    } else {
+                        response.json({ message: 'Login failed!' });
+                    }
+                });
+            }
         });
     } catch (e) {
 
